@@ -1,0 +1,72 @@
+Maven Project has 6 tables in the database representing information for character dialogues for all 8 movies in the Harry Potter franchise, including additional information about each movie, its chapters, characters, places, and spells.
+movies
+chapters
+characters
+places
+spells
+dialogue2
+
+#1. 
+Showing the number of lines of dialogue and runtime of the movies to answer the following questions:
+"Which movie has the most lines of dialog?" - Order of the Phoenix
+SELECT movie_title, runtime, COUNT(dialogue_id) AS number_of_lines FROM chapters
+JOIN dialogue2 ON dialogue2.chapter_id = chapters.chapter_id
+JOIN movies ON movies.movie_id = chapters.movie_id 
+GROUP BY movie_title, runtime
+ORDER BY number_of_lines DESC;
+
+"Is it also the longest movie?" - No, the longest movie is Chamber of Secrets
+
+SELECT movie_title, runtime, COUNT(dialogue_id) AS number_of_lines FROM chapters
+JOIN dialogue2 ON dialogue2.chapter_id = chapters.chapter_id
+JOIN movies ON movies.movie_id = chapters.movie_id 
+GROUP BY movie_title, runtime
+ORDER BY runtime DESC;
+
+#2.
+Showing the place where most of the scenes occurred in all movies:
+"The most popular location in total movies?" - Great Hall
+
+SELECT place_name, COUNT(dialogue_id) AS d_id FROM dialogue2
+JOIN places ON places.place_id = dialogue2.place_id
+GROUP BY place_name
+ORDER BY d_id DESC;
+
+#3. 
+Showing the place where most of the scenes occurred per movie:
+
+SELECT movie_title, place_name, COUNT(dialogue_id) AS number_of_lines FROM chapters
+JOIN dialogue2 ON dialogue2.chapter_id = chapters.chapter_id
+JOIN movies ON movies.movie_id = chapters.movie_id
+JOIN places ON places.place_id = dialogue2.place_id
+GROUP BY movie_title, place_name
+ORDER BY movie_title, number_of_lines DESC, place_name;
+
+
+*Saved query results as table query_1_hp_movies_queryresult
+
+SELECT movie_title, place_name, MAX(number_of_lines) AS lines FROM query_1_hp_movies_queryresult
+GROUP BY movie_title
+ORDER BY lines DESC;
+
+
+
+#4.
+Showing the favorite spells used on the movies:
+
+SELECT spells.incantation, dialogue2.dialogue_id, dialogue2.character_id, dialogue2.dialogue FROM spells
+CROSS JOIN dialogue2
+WHERE dialogue2.dialogue LIKE '%' + spells.incantation + '%'  ;
+*Saved query results as table spells_x_dialogue
+
+SELECT incantation, count(spells_x_dialogue.dialogue_id) AS times FROM spells_x_dialogue
+JOIN characters ON spells_x_dialogue.character_id = characters.character_id
+GROUP BY spells_x_dialogue.incantation
+ORDER BY times DESC;
+
+#5.
+Showing profit for each movie:
+
+SELECT movie_title, release_year, box_office-budget AS profit FROM movies
+ORDER BY movie_id;
+
