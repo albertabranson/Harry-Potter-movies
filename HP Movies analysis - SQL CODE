@@ -5,6 +5,8 @@ characters
 places
 spells
 dialogue2
+Source of the dataset: https://www.mavenanalytics.io/data-playground
+
 
 #1. 
 Showing the number of lines of dialogue and runtime of the movies to answer the following questions:
